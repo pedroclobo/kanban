@@ -15,6 +15,8 @@
 # define EXIT 'q'
 # define NEW_TASK 't'
 # define LIST_TASK 'l'
+# define FOWARD_TIME 'n'
+# define ADD_USER 'u'
 
 /* Define task */
 typedef struct {
@@ -25,6 +27,12 @@ typedef struct {
     unsigned int dur;
     unsigned int exec_time;
 } task;
+
+/* Define user */
+typedef struct {
+    char user[USER_LEN];
+} user;
+
 
 /* Prompts the user for a command to
  * execute and saves it to a string */
@@ -38,6 +46,16 @@ char get_key(char s[]) {
     return s[0];
 }
 
+/* Tranforms command into its first argument */
+void get_args(char cmd[]) {
+    sscanf(cmd, "%*2c %[^\n]", cmd);
+}
+
+/* Determines if a command has no arguments */
+int is_no_arg_cmd(char cmd[]) {
+    return (strlen(cmd) == 2);
+}
+
 /* Adds a new task to the system,
  * printing the task id */
 void new_task(char cmd[], unsigned int *task_c, task tasks[]) {
@@ -49,7 +67,8 @@ void new_task(char cmd[], unsigned int *task_c, task tasks[]) {
 
     /* Else */
     else {
-        sscanf(cmd, "%*1c %u %[^\n]", &tasks[*task_c].dur, tasks[*task_c].des);
+        get_args(cmd);
+        sscanf(cmd, "%u %[^\n]", &tasks[*task_c].dur, tasks[*task_c].des);
         sscanf(act, "%[^\n]", tasks[*task_c].act);
         *task_c += 1;
         printf("task %u\n", *task_c);
@@ -61,12 +80,12 @@ void list_tasks(char cmd[], task tasks[], unsigned int *task_c) {
     unsigned int i, j, number = 0;
 
     /* Only l */
-    if (!strcmp(cmd, "l\n"))
+    if (is_no_arg_cmd(cmd))
         for (i = 0; i < *task_c; i++)
             printf("%u %s #%u %s\n", i+1, tasks[i].act, tasks[i].dur, tasks[i].des);
 
     else {
-        sscanf(cmd, "%*2c %[^EOF]", cmd);
+        get_args(cmd);
 
         for (i = 0, j = 0; cmd[i] != '\0'; i++) {
             if (cmd[i] >= '0' && cmd[i] <= '9')
@@ -84,9 +103,27 @@ void list_tasks(char cmd[], task tasks[], unsigned int *task_c) {
 }
 
 
-void foward_time(int dur);
+void foward_time(char cmd[], unsigned int *time) {
+    unsigned int dur;
+    get_args(cmd);
+    sscanf(cmd, "%u", &dur);
+    *time += dur;
+    printf("%u\n", *time);
+}
 
-void add_user(char user[]);
+void add_user(char cmd[], unsigned int *user_c, user users[]) {
+    unsigned int i;
+
+    if (is_no_arg_cmd(cmd))
+        for (i = 0; i < *user_c; i++)
+            printf("%s\n", users[i].user);
+
+    else {
+        get_args(cmd);
+        sscanf(cmd, "%[^\n]", users[*user_c].user);
+        *user_c += 1;
+    }
+}
 
 void move_taks(int id, char user[], char act[]);
 
@@ -98,6 +135,13 @@ int main() {
     task tasks[TASK];
     unsigned int task_c = 0;
 
+    /* Time */
+    unsigned int time = 0;
+
+    /* Users */
+    user users[USER];
+    unsigned int user_c = 0;
+
     /* While user doesn't quit the program */
     for (get_cmd(cmd); get_key(cmd) != EXIT; get_cmd(cmd)) {
         switch(get_key(cmd)) {
@@ -107,6 +151,11 @@ int main() {
             case LIST_TASK:
                 list_tasks(cmd, tasks, &task_c);
                 break;
+            case FOWARD_TIME:
+                foward_time(cmd, &time);
+                break;
+            case ADD_USER:
+                add_user(cmd, &user_c, users);
         }
     }
 
