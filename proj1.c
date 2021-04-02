@@ -22,56 +22,56 @@ int is_no_arg_cmd(char cmd[]) {
 }
 
 /* Increments the counter */
-void increment_counter(double inc, counter c[], char type) {
+void increment_counter(int inc, char type, data d[]) {
 	switch (type) {
 		case 't':
-			c[0].task += inc;
+			d[0].c.task += inc;
 			break;
 		case 'n':
-			c[0].time += inc;
+			d[0].c.time += inc;
 			break;
 		case 'u':
-			c[0].user += inc;
+			d[0].c.user += inc;
 			break;
 		case 'a':
-			c[0].activity += inc;
+			d[0].c.activity += inc;
 			break;
 	}
 }
 
 /* Determines if a user exists */
-int is_user(char user[], char users[][USER_LEN], counter c[]) {
+int is_user(char user[], data d[]) {
 	unsigned int i;
 
-	for (i = 0; i < c[0].user; i++)
-		if (!strcmp(users[i], user))
+	for (i = 0; i < d[0].c.user; i++)
+		if (!strcmp(d[0].u[i].name, user))
 			return 1;
 
 	return 0;
 }
 
 /* Determines if a activity exists */
-int is_activity(char act[], char activities[][ACT_LEN], counter c[]) {
+int is_activity(char act[], data d[]) {
 	unsigned int i;
 
-	for (i = 0; i < c[0].activity; i++)
-		if (!strcmp(activities[i], act))
+	for (i = 0; i < d[0].c.activity; i++)
+		if (!strcmp(d[0].a[i].des, act))
 			return 1;
 
 	return 0;
 }
 
 /* Determines if a task exists, based on its id */
-int is_task_id(unsigned int id, counter c[]) {
-	return 1 <= id && id <= c[0].task;
+int is_task_id(unsigned int id, data d[]) {
+	return 1 <= id && id <= d[0].c.task;
 }
 
 /* Determines if a task exists, based on its description */
-int is_task(char des[], task tasks[], counter c[]) {
+int is_task(char des[], data d[]) {
 	unsigned int i;
 
-	for (i = 0; i < c[0].task; i++)
-		if (!strcmp(tasks[i].des, des))
+	for (i = 0; i < d[0].c.task; i++)
+		if (!strcmp(d[0].t[i].des, des))
 			return 1;
 
 	return 0;
@@ -98,65 +98,65 @@ int is_valid_activity(char des[]) {
 }
 
 /* Determines if the maximum number of tasks has been reached */
-int max_tasks(counter c[]) {
-	return c[0].task == TASK;
+int max_tasks(data d[]) {
+	return d[0].c.task == TASK;
 }
 
 /* Determines if the maximum number of users has been reached */
-int max_users(counter c[]) {
-	return c[0].user == USER;
+int max_users(data d[]) {
+	return d[0].c.user == USER;
 }
 
-int max_activities(counter c[]) {
-	return c[0].activity == ACT;
+int max_activities(data d[]) {
+	return d[0].c.activity == ACT;
 }
 
 /* Gives the specified duration to the task with the given id */
-void add_task_duration(unsigned int dur, unsigned int id, task tasks[]) {
-	tasks[id-1].dur = dur;
+void add_task_duration(unsigned int dur, unsigned int id, data d[]) {
+	d[0].t[id-1].dur = dur;
 }
 
 /* Gives the specified description to the task with the given id */
-void add_task_description(char des[], unsigned int id, task tasks[]) {
-	strcpy(tasks[id-1].des, des);
+void add_task_description(char des[], unsigned int id, data d[]) {
+	strcpy(d[0].t[id-1].des, des);
 }
 
 /* Gives the specified activity to the task with the given id */
-void add_task_activity(char act[], unsigned int id, task tasks[]) {
-	strcpy(tasks[id-1].act, act);
+void add_task_activity(char act[], unsigned int id, data d[]) {
+	strcpy(d[0].t[id-1].act, act);
 }
 
-void get_task_duration(unsigned int id, unsigned int *dur, task tasks[]) {
-	*dur = tasks[id-1].dur;
+void get_task_duration(unsigned int id, unsigned int *dur, data d[]) {
+	*dur = d[0].t[id-1].dur;
 }
 
-void get_task_description(unsigned int id, char des[], task tasks[]) {
-	strcpy(des, tasks[id-1].des);
+void get_task_description(unsigned int id, char des[], data d[]) {
+	strcpy(des, d[0].t[id-1].des);
 }
 
-void get_task_activity(unsigned int id, char act[], task tasks[]) {
-	strcpy(act, tasks[id-1].act);
+void get_task_activity(unsigned int id, char act[], data d[]) {
+	strcpy(act, d[0].t[id-1].act);
 }
 
 /* Sugests a task id for a new task */
-void get_new_id(unsigned int *id, counter c[]) {
-	if (!max_tasks(c)) {
-		*id = c[0].task + 1;
-		increment_counter(1, c, 't');
+void get_new_id(unsigned int *id, data d[]) {
+	if (!max_tasks(d)) {
+		*id = d[0].c.task + 1;
+		increment_counter(1, 't', d);
 	}
 }
 
-void add_new_user(char user[], char users[][USER_LEN], counter c[]) {
-	if (!max_users(c)) {
-		strcpy(users[c[0].user], user);
-		increment_counter(1, c, 'u');
+void add_new_user(char user[], data d[]) {
+	if (!max_users(d)) {
+		strcpy(d[0].u[d[0].c.user].name, user);
+		increment_counter(1, 'u', d);
 	}
 }
 
-void add_new_activity(char des[], char activities[][ACT_LEN], counter c[]) {
-	if (!max_activities(c)) {
-		strcpy(activities[c[0].activity], des);
-		increment_counter(1, c, 'a');
+void add_new_activity(char des[], data d[]) {
+	if (!max_activities(d)) {
+		strcpy(d[0].a[d[0].c.activity].des, des);
+		increment_counter(1, 'a', d);
 	}
 }
 
@@ -210,18 +210,15 @@ void get_args(char cmd[], unsigned int *dur, char des[], char act[], char user[]
 
 /* Adds a new task to the system,
  * printing the task id */
-void new_task(unsigned int dur, char des[], counter c[], task tasks[]) {
+void new_task(unsigned int dur, char des[], data d[]) {
 	unsigned int id;
 
-	/* Get a id for the new task */
-	get_new_id(&id, c);
-
 	/* If task number limit is exceed */
-	if (max_tasks(c))
+	if (max_tasks(d))
 		printf("too many tasks\n");
 
 	/* If a task with the same description already exists */
-	else if (is_task(des, tasks, c))
+	else if (is_task(des, d))
 		printf("duplicate description\n");
 
 	/* If the duration in not a postive integer */
@@ -230,16 +227,17 @@ void new_task(unsigned int dur, char des[], counter c[], task tasks[]) {
 
 	/* Create the new task */
 	else {
-		add_task_duration(dur, id, tasks);
-		add_task_description(des, id, tasks);
-		add_task_activity("TO DO", id, tasks);
+		get_new_id(&id, d);
+		add_task_duration(dur, id, d);
+		add_task_description(des, id, d);
+		add_task_activity("TO DO", id, d);
 
 		printf("task %u\n", id);
 	}
 }
 
 /* Lists created tasks */
-void list_tasks(char cmd[], unsigned int ids[], unsigned int *size, task tasks[], counter c[]) {
+void list_tasks(char cmd[], unsigned int ids[], unsigned int *size, data d[]) {
 	unsigned int id;
 	unsigned int dur;
 	char des[TASK_LEN];
@@ -249,17 +247,17 @@ void list_tasks(char cmd[], unsigned int ids[], unsigned int *size, task tasks[]
 
 	/* If no arguments are specified, list all tasks */
 	if (is_no_arg_cmd(cmd))
-		for (id = 1; id <= c[0].task; id++) {
-			get_task_duration(id, &dur, tasks);
-			get_task_description(id, des, tasks);
-			get_task_activity(id, act, tasks);
+		for (id = 1; id <= d[0].c.task; id++) {
+			get_task_duration(id, &dur, d);
+			get_task_description(id, des, d);
+			get_task_activity(id, act, d);
 			printf("%u %s #%u %s\n", id, act, dur, des);
 		}
 
 	else {
 		/* Task id validation */
 		for (id = 1; id < *size+1; id++)
-			if (!is_task_id(ids[id-1], c)) {
+			if (!is_task_id(ids[id-1], d)) {
 				printf("%u no such task\n", ids[id-1]);
 				ERROR = YES;
 			}
@@ -267,9 +265,9 @@ void list_tasks(char cmd[], unsigned int ids[], unsigned int *size, task tasks[]
 		/* If all ids are valid, list the tasks */
 		if (ERROR == NO) {
 			for (id = 1; id < *size+1; id++) {
-				get_task_duration(id, &dur, tasks);
-				get_task_description(id, des, tasks);
-				get_task_activity(id, act, tasks);
+				get_task_duration(id, &dur, d);
+				get_task_description(id, des, d);
+				get_task_activity(id, act, d);
 				printf("%u %s #%u %s\n", id, act, dur, des);
 			}
 		}
@@ -278,86 +276,85 @@ void list_tasks(char cmd[], unsigned int ids[], unsigned int *size, task tasks[]
 
 
 /* Foward the system time and prints current time */
-void foward_time(int dur, counter c[]) {
+void foward_time(int dur, data d[]) {
 	if (!is_valid_time(dur))
 		printf("invalid time\n");
 
 	else {
-		increment_counter(dur, c, 't');
-		c[0].time += dur;
-		printf("%u\n", c[0].time);
+		increment_counter(dur, 'n', d);
+		printf("%u\n", d[0].c.time);
 	}
 }
 
 
 /* Adds a user or lists all users */
-void add_user(char cmd[], char user[], counter c[], char users[][USER_LEN]) {
+void add_user(char cmd[], char user[], data d[]) {
 	unsigned int i;
 
 	if (is_no_arg_cmd(cmd))
-		for (i = 0; i < c[0].user; i++)
-			printf("%s\n", users[i]);
+		for (i = 0; i < d[0].c.user; i++)
+			printf("%s\n", d[0].u[i].name);
 
 	else {
 		/* Errors */
-		if (is_user(user, users, c))
+		if (is_user(user, d))
 			printf("user already exists\n");
-		else if (max_users(c))
+		else if (max_users(d))
 			printf("too many users\n");
 
 		/* If there are no errors */
 		else {
 			if (is_no_arg_cmd(cmd))
-				for (i = 0; i < c[0].user; i++)
-					printf("%s\n", users[i]);
+				for (i = 0; i < d[0].c.user; i++)
+					printf("%s\n", d[0].u[i].name);
 			else
-				add_new_user(user, users, c);
+				add_new_user(user, d);
 		}
 	}
 }
 
 /* Moves task from one activity to another */
-void move_task(unsigned int id, char user[], char activity[], task tasks[], char users[][USER_LEN], counter c[], char activities[][ACT_LEN]) {
-	if (!is_task_id(id, c))
+void move_task(unsigned int id, char user[], char activity[], data d[]) {
+	if (!is_task_id(id, d))
 		printf("no such task\n");
 
 	else if (!strcmp(activity, "TO DO"))
 		printf("task already started\n");
 
-	else if (!is_user(user, users, c))
+	else if (!is_user(user, d))
 		printf("no such user\n");
 
-	else if (!is_activity(activity, activities, c))
+	else if (!is_activity(activity, d))
 		printf("no such activity\n");
 
 	else {
-		add_task_activity(activity, id, tasks);
+		add_task_activity(activity, id, d);
 	}
 }
 
 
-void add_activity(char cmd[], char des[], char activities[][ACT_LEN], counter c[]) {
+void add_activity(char cmd[], char des[], data d[]) {
 	unsigned int i;
 
 	if (is_no_arg_cmd(cmd))
-		for (i = 0; i < c[0].activity; i++)
-			printf("%s\n", activities[i]);
+		for (i = 0; i < d[0].c.activity; i++)
+			printf("%s\n", d[0].a[i].des);
 
 	else {
-		if (is_activity(des, activities, c))
+		if (is_activity(des, d))
 			printf("duplicate activity\n");
 		else if (!is_valid_activity(des))
 			printf("invalid description\n");
-		else if (max_activities(c))
+		else if (max_activities(d))
 			printf("too many activities\n");
 		else {
-			add_new_activity(des, activities, c);
+			add_new_activity(des, d);
 		}
 	}
 }
 
-void list_tasks_in_activity(char activity[], task tasks[], char activities[][ACT_LEN], counter c[]) {
-	if (!is_activity(activity, activities, c))
+void list_tasks_in_activity(char activity[], data d[]) {
+	if (!is_activity(activity, d))
 		printf("no such activity\n");
 
 	else {
@@ -366,15 +363,11 @@ void list_tasks_in_activity(char activity[], task tasks[], char activities[][ACT
 }
 
 int main() {
-	/* Initialize counters */
-	task tasks[TASK];
-	counter c = { 0, 0, 0, 0 };
+	/* Declare data sctructure */
+	data d;
 
 	/* Declare command string */
 	char cmd[CMD_LEN];
-	char users[USER][USER_LEN];
-	char activities[ACT][ACT_LEN];
-
 	unsigned int dur;
 	char des[TASK_LEN];
 	char act[ACT_LEN];
@@ -383,27 +376,38 @@ int main() {
 	unsigned int size;
 	unsigned int id;
 
+	/* Init activities */
+	strcpy(d.a[0].des, "TO DO");
+	strcpy(d.a[1].des, "IN PROGRESS");
+	strcpy(d.a[2].des, "DONE");
+
+	/* Counter */
+	d.c.task = 0;
+	d.c.time = 0;
+	d.c.user = 0;
+	d.c.activity = 3;
+
 	/* While user doesn't quit the program */
 	for (get_cmd(cmd); get_cmd_name(cmd) != EXIT; get_cmd(cmd)) {
 		get_args(cmd, &dur, des, act, user, ids, &size, &id);
 		switch(get_cmd_name(cmd)) {
 			case NEW_TASK:
-				new_task(dur, des, &c, tasks);
+				new_task(dur, des, &d);
 				break;
 			case LIST_TASK:
-				list_tasks(cmd, ids, &size, tasks, &c);
+				list_tasks(cmd, ids, &size, &d);
 				break;
 			case FOWARD_TIME:
-				foward_time(dur, &c);
+				foward_time(dur, &d);
 				break;
 			case ADD_USER:
-				add_user(cmd, user, &c, users);
+				add_user(cmd, user, &d);
 				break;
 			case MOVE_TASK:
-				move_task(id, user, act, tasks, users, &c, activities);
+				move_task(id, user, act, &d);
 				break;
 			case ADD_ACTIVITY:
-				add_activity(cmd, des, activities, &c);
+				add_activity(cmd, des, &d);
 
 		}
 	}

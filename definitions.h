@@ -33,6 +33,16 @@ typedef struct {
 	unsigned int exec_time;
 } task;
 
+/* Define activity */
+typedef struct {
+	char des[ACT_LEN];
+} activity;
+
+/* Define user */
+typedef struct {
+	char name[USER_LEN];
+} user;
+
 /* Define counter */
 typedef struct {
 	unsigned int task;
@@ -40,3 +50,11 @@ typedef struct {
 	unsigned int user;
 	unsigned int activity;
 } counter;
+
+/* Main structure */
+typedef struct {
+	user u[USER];
+	activity a[ACT];
+	task t[TASK];
+	counter c;
+} data;
