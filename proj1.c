@@ -125,7 +125,6 @@ unsigned create_task(data d[]) {
 	id = get_new_id(d);
 	d[0].t[id-1].id = id;
 	strcpy(d[0].t[id-1].act, "TO DO");
-	d[0].t[id-1].exec_time = 0;
 	increment_counter(1, 't', d);
 
 	return id;
@@ -221,6 +220,35 @@ void sort_abc(data d[], int l, int r) {
 	}
 }
 
+void merge(task t[], int l, int m, int r) {
+	int i, j, k;
+	task aux[TASK];
+
+	for (i = m+1; i > l; i--)
+		aux[i-1] = t[i-1];
+	for (j = m; j < r; j++)
+		aux[r+m-j] = t[j+1];
+	for (k = l; k <= r; k++) {
+		if (aux[j].exec_time < aux[i].exec_time)
+			t[k] = aux[j--];
+		else if (aux[j].exec_time == aux[i].exec_time && strcmp(aux[j].des, aux[i].des) < 0)
+			t[k] = aux[j--];
+		else
+			t[k] = aux[i++];
+	}
+}
+
+void mergesort(task t[], int l, int r) {
+	int m = (r+l)/2;
+
+	if (r <= l)
+		return;
+
+	mergesort(t, l, m);
+	mergesort(t, m+1, r);
+	merge(t, l, m, r);
+}
+
 void get_args(char cmd[], unsigned int *dur, char des[], char act[], char user[], unsigned int ids[], unsigned int *size, unsigned int *id) {
 	char ids_str[26];
 
@@ -244,6 +272,9 @@ void get_args(char cmd[], unsigned int *dur, char des[], char act[], char user[]
 			break;
 		case ADD_ACTIVITY:
 			sscanf(cmd, "%*2c %[^\n]", des);
+			break;
+		case LIST_ACTIVITY_TASKS:
+			sscanf(cmd, "%*2c %[^\n]", act);
 			break;
 	}
 }
@@ -315,16 +346,10 @@ void list_tasks(char cmd[], unsigned int ids[], unsigned int *size, data d[]) {
 
 /* Foward the system time and prints current time */
 void foward_time(int dur, data d[]) {
-	unsigned int id;
-
 	if (!is_valid_time(dur))
 		printf("invalid time\n");
 
 	else {
-		for (id = 1; id <= d[0].c.task; id++)
-			if (strcmp(get_task_activity(id, d), "TO DO") && strcmp(get_task_activity(id, d), "DONE"))
-				d[0].t[id-1].exec_time += dur;
-
 		increment_counter(dur, 'n', d);
 		printf("%u\n", d[0].c.time);
 	}
@@ -359,6 +384,8 @@ void add_user(char cmd[], char user[], data d[]) {
 
 /* Moves task from one activity to another */
 void move_task(unsigned int id, char user[], char activity[], data d[]) {
+	unsigned i;
+
 	if (!is_task_id(id, d))
 		printf("no such task\n");
 
@@ -373,11 +400,14 @@ void move_task(unsigned int id, char user[], char activity[], data d[]) {
 
 	else {
 		add_task_activity(activity, id, d);
-		if (!strcmp(activity, "DONE"))
-			printf("duration=%u slack=%d\n", get_task_exec_time(id, d), get_task_exec_time(id, d) - get_task_duration(id, d));
+		for (i = 0; i < d[0].c.task; i++)
+			if (d[0].t[i].id == id)
+				d[0].t[i].exec_time = d[0].c.time;
+		if (!strcmp(activity, "DONE")) {
+			printf("duration=%u slack=%d\n", get_task_duration(id, d), d[0].c.time - get_task_exec_time(id, d) - get_task_duration(id, d));
+		}
 	}
 }
-
 
 void add_activity(char cmd[], char des[], data d[]) {
 	unsigned int i;
@@ -399,12 +429,28 @@ void add_activity(char cmd[], char des[], data d[]) {
 	}
 }
 
+void tasks_in_activity(char activity[], task t[TASK], unsigned *size, data d[]) {
+	unsigned i;
+
+	for (i = 0; i < d[0].c.task; i++)
+		if (!strcmp(d[0].t[i].act, activity)) {
+			t[*size] = d[0].t[i];
+			*size += 1;
+		}
+}
+
 void list_tasks_in_activity(char activity[], data d[]) {
+	task t[TASK];
+	unsigned i, size = 0;
+
 	if (!is_activity(activity, d))
 		printf("no such activity\n");
 
 	else {
-
+		tasks_in_activity(activity, t, &size, d);
+		mergesort(t, 0, size-1);
+		for (i = 0; i < size; i++)
+			printf("%u %u %s\n", t[i].id, t[i].exec_time, t[i].des);
 	}
 }
 
@@ -454,7 +500,10 @@ int main() {
 				break;
 			case ADD_ACTIVITY:
 				add_activity(cmd, des, &d);
-
+				break;
+			case LIST_ACTIVITY_TASKS:
+				list_tasks_in_activity(act, &d);
+				break;
 		}
 	}
 
