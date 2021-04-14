@@ -8,12 +8,12 @@
 /* Max value of objects allowed */
 #define TASK 10000
 #define USER 50
-#define ACT 10
+#define ACTIVITY_MAX 10
 
 /* Max string lenght values allowed */
 #define CMD_LEN 100
 #define TASK_LEN 50
-#define ACT_LEN 20
+#define ACTIVITY_LEN 20
 #define USER_LEN 20
 
 /* Define the key functions */
@@ -37,14 +37,14 @@ typedef struct {
 	unsigned id;
 	char des[TASK_LEN];
 	char user[USER_LEN];
-	char act[ACT_LEN];
-	int dur;
+	char act[ACTIVITY_LEN];
+	unsigned dur;
 	unsigned exec_time;
 } task;
 
 /* Define activity */
 typedef struct {
-	char des[ACT_LEN];
+	char des[ACTIVITY_LEN];
 } activity;
 
 /* Define user */
@@ -63,7 +63,7 @@ typedef struct {
 /* Main structure */
 typedef struct {
 	user u[USER];
-	activity a[ACT];
+	activity a[ACTIVITY_MAX];
 	task t[TASK];
 	counter c;
 	char order;
@@ -79,6 +79,8 @@ int is_no_arg_cmd(char cmd[]);
 void increment_counter(unsigned inc, char type, data d[]);
 
 /* Task */
+int is_valid_task_duration(int dur);
+int is_valid_task_description(char des[]);
 int max_tasks(data d[]);
 unsigned get_new_id(data d[]);
 int is_task_id(unsigned int id, data d[]);
@@ -97,12 +99,14 @@ void set_task_start_time(unsigned int id, data d[]);
 void list_all_tasks(data d[]);
 
 /* User */
+int is_valid_user_name(char user[]);
 int is_user(char user[], data d[]);
 int max_users(data d[]);
 void add_new_user(char user[], data d[]);
 char *get_user_name(user user[]);
 
 /* Activity */
+void init_activities(data d[]);
 int is_activity(char act[], data d[]);
 int is_valid_activity(char des[]);
 int max_activities(data d[]);
@@ -120,9 +124,5 @@ int binarySearch(data d[], task t, int low, int high, char type, char *order);
 void insertionSort(data d[], int n, char type, char *order);
 void merge(data d[], int l, int m, int r, char type);
 void mergesort(data d[], int l, int r, char type, char *order);
-
-
-
-
 
 #endif

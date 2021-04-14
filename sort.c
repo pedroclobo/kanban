@@ -131,4 +131,5 @@ mergesort(data d[], int l, int r, char type, char *order) {
 	mergesort(d, l, m, type, order);
 	mergesort(d, m + 1, r, type, order);
 	merge(d, l, m, r, type);
+	*order = type;
 }

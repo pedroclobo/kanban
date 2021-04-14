@@ -4,23 +4,16 @@
 
 #include "definitions.h"
 
-/* Determines if the input is a valid task duration */
+/* Time increments must be 0 or a positive integer */
 int
-is_valid_duration(int dur) {
-	return dur > 0;
-}
-
-/* Determines if the input is a valid time increment */
-int
-is_valid_time(double dur) {
+is_valid_time(int dur) {
 	return dur >= 0;
 }
 
-/* Recieves string of tasks ids and
- * converts it to an array of tasks ids */
+/* Transforms a string of ids separated by whitespaces into an array of ids */
 void
-get_ids(char cmd[], unsigned int ids[], unsigned int *size) {
-	unsigned int i, number = 0;
+get_ids(char cmd[], unsigned ids[], unsigned *size) {
+	unsigned i, number = 0;
 
 	/* Builds the number and places it in the array */
 	for (i = 0, *size = 0; cmd[i] != '\0'; i++) {
@@ -32,13 +25,14 @@ get_ids(char cmd[], unsigned int ids[], unsigned int *size) {
 			number = 0;
 		}
 	}
-	/* The final number has to be added manually
-	 * because there's no " " at the end of the string */
+
+	/* The final number has to be added manually because there's no " " at the end of the string */
 	ids[*size] = number;
 	*size += 1;
 }
 
 
+/* Recieves a command and separates it into relevant information to be used by other functions */
 void
 get_args(char cmd[], unsigned int *uint, char string1[], char string2[],
 	 unsigned int ids[]) {
@@ -54,13 +48,14 @@ get_args(char cmd[], unsigned int *uint, char string1[], char string2[],
 		sscanf(cmd, "%*2c %u", uint);
 		break;
 	case ADD_USER:
-		sscanf(cmd, "%*2c %20s %*[^\n]", string1);
+		sscanf(cmd, "%*2c %20[^ \n]", string1);
 		break;
 	case MOVE_TASK:
-		sscanf(cmd, "%*2c %u %50[^ ] %20[^\n]", uint, string1, string2);
+		sscanf(cmd, "%*2c %u %20[^ \n] %20[^\n]", uint, string1,
+		       string2);
 		break;
 	case ADD_ACTIVITY:
-		sscanf(cmd, "%*2c %50[^\n]", string1);
+		sscanf(cmd, "%*2c %20[^\n]", string1);
 		break;
 	case LIST_ACTIVITY_TASKS:
 		sscanf(cmd, "%*2c %20[^\n]", string1);
@@ -68,8 +63,7 @@ get_args(char cmd[], unsigned int *uint, char string1[], char string2[],
 	}
 }
 
-/* Adds a new task to the system,
- * printing the task id */
+/* Adds a new task to the system, printing the task id */
 void
 new_task(int dur, char des[], data d[]) {
 	unsigned int id;
@@ -83,11 +77,11 @@ new_task(int dur, char des[], data d[]) {
 		printf("duplicate description\n");
 
 	/* If the duration in not a postive integer */
-	else if (!is_valid_duration(dur))
+	else if (!is_valid_task_duration(dur))
 		printf("invalid duration\n");
 
 	/* Create the new task */
-	else {
+	else if (is_valid_task_description(des)) {
 		id = create_task(d);
 		set_task_duration(dur, id, d);
 		set_task_description(des, id, d);
@@ -114,7 +108,7 @@ list_tasks(char cmd[], unsigned int ids[], unsigned int *size, data d[]) {
 			printf("%u: no such task\n", ids[i]);
 
 		else {
-			printf("%u %s #%d %s\n",
+			printf("%u %.20s #%d %.50s\n",
 			       ids[i],
 			       get_task_activity(ids[i], d),
 			       get_task_duration(ids[i], d),
@@ -143,7 +137,7 @@ add_user(char cmd[], char user[], data d[]) {
 
 	if (is_no_arg_cmd(cmd))
 		for (i = 0; i < USER_INDEX; i++)
-			printf("%s\n", get_user_name(&d[0].u[i]));
+			printf("%.20s\n", d[0].u[i].name);
 
 	/* Error handling */
 	else if (is_user(user, d))
@@ -153,13 +147,13 @@ add_user(char cmd[], char user[], data d[]) {
 		printf("too many users\n");
 
 	/* Add new user */
-	else
+	else if (is_valid_user_name(user))
 		add_new_user(user, d);
 }
 
 /* Moves task from one activity to another */
 void
-move_task(unsigned int id, char user[], char activity[], data d[]) {
+move_task(unsigned id, char user[], char activity[], data d[]) {
 	if (!is_task_id(id, d))
 		printf("no such task\n");
 
@@ -215,7 +209,7 @@ add_activity(char cmd[], char des[], data d[]) {
 
 	if (is_no_arg_cmd(cmd))
 		for (i = 0; i < ACTIVITY_INDEX; i++)
-			printf("%s\n", d[0].a[i].des);
+			printf("%.20s\n", d[0].a[i].des);
 
 	else {
 		if (is_activity(des, d))
@@ -243,10 +237,7 @@ main() {
 
 	d.order = 'i';
 
-	/* Init activities */
-	strcpy(d.a[0].des, "TO DO");
-	strcpy(d.a[1].des, "IN PROGRESS");
-	strcpy(d.a[2].des, "DONE");
+	init_activities(&d);
 
 	/* Counter */
 	d.c.task = 0;

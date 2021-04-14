@@ -4,6 +4,17 @@
 
 #include "definitions.h"
 
+/* Task duration must be a positive integer */
+int
+is_valid_task_duration(int dur) {
+	return dur > 0;
+}
+
+int
+is_valid_task_description(char des[]) {
+	return 1 <= strlen(des) && strlen(des) <= TASK;
+}
+
 /* Determines if the maximum number of tasks has been reached */
 int
 max_tasks(data d[]) {

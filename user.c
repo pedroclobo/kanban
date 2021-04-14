@@ -4,6 +4,11 @@
 
 #include "definitions.h"
 
+int
+is_valid_user_name(char user[]) {
+	return 1 <= strlen(user) && strlen(user) <= USER;
+}
+
 /* Determines if a user exists */
 int
 is_user(char user[], data d[]) {
@@ -30,9 +35,4 @@ add_new_user(char user[], data d[]) {
 		strcpy(d[0].u[USER_INDEX].name, user);
 		increment_counter(1, 'u', d);
 	}
-}
-
-char *
-get_user_name(user user[]) {
-	return user[0].name;
 }
