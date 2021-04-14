@@ -118,6 +118,9 @@ void bubble(data d[], int left, int right, char type, char *order);
 void insertion(data d[], int left, int right, char type, char *order);
 int binarySearch(data d[], task t, int low, int high, char type, char *order);
 void insertionSort(data d[], int n, char type, char *order);
+void merge(data d[], int l, int m, int r, char type);
+void mergesort(data d[], int l, int r, char type, char *order);
+
 
 
 

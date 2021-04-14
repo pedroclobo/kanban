@@ -103,7 +103,7 @@ list_tasks(char cmd[], unsigned int ids[], unsigned int *size, data d[]) {
 
 	/* If command is passed with no arguments */
 	if (is_no_arg_cmd(cmd)) {
-		insertion(d, 0, TASK_INDEX - 1, 'a', &d[0].order);
+		mergesort(d, 0, TASK_INDEX - 1, 'a', &d[0].order);
 		list_all_tasks(d);
 		return;
 	}
@@ -163,7 +163,8 @@ move_task(unsigned int id, char user[], char activity[], data d[]) {
 	if (!is_task_id(id, d))
 		printf("no such task\n");
 
-	else if (!strcmp(activity, "TO DO") && strcmp(get_task_activity(id, d), "TO DO"))
+	else if (!strcmp(activity, "TO DO")
+		 && strcmp(get_task_activity(id, d), "TO DO"))
 		printf("task already started\n");
 
 	else if (!is_user(user, d))
@@ -199,7 +200,7 @@ list_tasks_in_activity(char activity[], data d[]) {
 		printf("no such activity\n");
 
 	else {
-		insertion(d, 0, TASK_INDEX - 1, 'd', &d[0].order);
+		mergesort(d, 0, TASK_INDEX - 1, 'd', &d[0].order);
 		for (i = 0; i < TASK_INDEX; i++)
 			if (!strcmp(d[0].t[i].act, activity))
 				printf("%u %u %s\n",

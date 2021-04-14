@@ -105,3 +105,30 @@ binarySearch(data d[], task t, int low, int high, char type, char *order) {
 		return binarySearch(d, t, mid + 1, high, type, order);
 	return binarySearch(d, t, low, mid - 1, type, order);
 }
+
+
+void
+merge(data d[], int l, int m, int r, char type) {
+	task t[TASK];
+
+	int i, j, k;
+	for (i = m + 1; i > l; i--)
+		t[i - 1] = d[0].t[i - 1];
+	for (j = m; j < r; j++)
+		t[r + m - j] = d[0].t[j + 1];
+	for (k = l; k <= r; k++)
+		if (less(&t[j], &t[i], type))
+			d[0].t[k] = t[j--];
+		else
+			d[0].t[k] = t[i++];
+}
+
+void
+mergesort(data d[], int l, int r, char type, char *order) {
+	int m = (r + l) / 2;
+	if (r <= l)
+		return;
+	mergesort(d, l, m, type, order);
+	mergesort(d, m + 1, r, type, order);
+	merge(d, l, m, r, type);
+}

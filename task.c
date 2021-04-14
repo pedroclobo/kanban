@@ -45,7 +45,7 @@ create_task(data d[]) {
 	unsigned id;
 
 	if (ORDER != 'i')
-		insertion(d, 0, TASK_INDEX - 1, 'i', &ORDER);
+		mergesort(d, 0, TASK_INDEX - 1, 'i', &ORDER);
 
 	id = get_new_id(d);
 	d[0].t[id - 1].id = id;
@@ -58,7 +58,7 @@ create_task(data d[]) {
 int
 get_task_duration(unsigned id, data d[]) {
 	if (ORDER != 'i')
-		insertion(d, 0, TASK_INDEX - 1, 'i', &ORDER);
+		mergesort(d, 0, TASK_INDEX - 1, 'i', &ORDER);
 
 	return d[0].t[id - 1].dur;
 
@@ -68,7 +68,7 @@ get_task_duration(unsigned id, data d[]) {
 char *
 get_task_description(unsigned id, data d[]) {
 	if (ORDER != 'i')
-		insertion(d, 0, TASK_INDEX - 1, 'i', &ORDER);
+		mergesort(d, 0, TASK_INDEX - 1, 'i', &ORDER);
 
 	return d[0].t[id - 1].des;
 }
@@ -77,7 +77,7 @@ get_task_description(unsigned id, data d[]) {
 char *
 get_task_activity(unsigned id, data d[]) {
 	if (ORDER != 'i')
-		insertion(d, 0, TASK_INDEX - 1, 'i', &ORDER);
+		mergesort(d, 0, TASK_INDEX - 1, 'i', &ORDER);
 
 	return d[0].t[id - 1].act;
 }
@@ -86,7 +86,7 @@ get_task_activity(unsigned id, data d[]) {
 unsigned
 get_task_exec_time(unsigned id, data d[]) {
 	if (ORDER != 'i')
-		insertion(d, 0, TASK_INDEX - 1, 'i', &ORDER);
+		mergesort(d, 0, TASK_INDEX - 1, 'i', &ORDER);
 
 	return d[0].t[id - 1].exec_time;
 }
@@ -95,7 +95,7 @@ get_task_exec_time(unsigned id, data d[]) {
 void
 set_task_duration(int dur, unsigned int id, data d[]) {
 	if (ORDER != 'i')
-		insertion(d, 0, TASK_INDEX - 1, 'i', &ORDER);
+		mergesort(d, 0, TASK_INDEX - 1, 'i', &ORDER);
 
 	d[0].t[id - 1].dur = dur;
 }
@@ -104,7 +104,7 @@ set_task_duration(int dur, unsigned int id, data d[]) {
 void
 set_task_description(char des[], unsigned int id, data d[]) {
 	if (ORDER != 'i')
-		insertion(d, 0, TASK_INDEX - 1, 'i', &ORDER);
+		mergesort(d, 0, TASK_INDEX - 1, 'i', &ORDER);
 
 	strcpy(d[0].t[id - 1].des, des);
 }
@@ -113,7 +113,7 @@ set_task_description(char des[], unsigned int id, data d[]) {
 void
 set_task_activity(char act[], unsigned int id, data d[]) {
 	if (ORDER != 'i')
-		insertion(d, 0, TASK_INDEX - 1, 'i', &ORDER);
+		mergesort(d, 0, TASK_INDEX - 1, 'i', &ORDER);
 
 	strcpy(d[0].t[id - 1].act, act);
 }
@@ -121,7 +121,7 @@ set_task_activity(char act[], unsigned int id, data d[]) {
 void
 set_task_start_time(unsigned int id, data d[]) {
 	if (ORDER != 'i')
-		insertion(d, 0, TASK_INDEX - 1, 'i', &ORDER);
+		mergesort(d, 0, TASK_INDEX - 1, 'i', &ORDER);
 
 	d[0].t[id - 1].exec_time = TIME;
 }
