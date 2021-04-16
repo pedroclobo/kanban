@@ -1,8 +1,14 @@
+/*
+ * File: activity.c
+ * Author: Pedro Lobo
+ * Description: File with all functions related to the activity struct.
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "definitions.h"
+#include "proj1.h"
 
 /* Determines if the input is a valid activity description */
 int
@@ -12,7 +18,7 @@ is_valid_activity(char des[]) {
 	for (i = 0; des[i] != '\0'; i++)
 		/* Activity description must not contain lowercase letters */
 		if ('a' <= des[i] && des[i] <= 'z')
-			return 0;
+			return FALSE;
 
 	/* Activity description must not be a empty string */
 	return 1 <= strlen(des) && strlen(des) <= ACTIVITY_LEN;
@@ -24,10 +30,10 @@ is_activity(char des[], data d[]) {
 	unsigned int i;
 
 	for (i = 0; i < ACTIVITY_INDEX; i++)
-		if (!strcmp(d[0].a[i].des, des))
-			return 1;
+		if (!strcmp(ACTIVITY_DESCRIPTION(i), des))
+			return TRUE;
 
-	return 0;
+	return FALSE;
 }
 
 /* Determines if the maximum number of activities has been reached */
@@ -37,15 +43,18 @@ max_activities(data d[]) {
 }
 
 /* Recieves a activity and adds it to the system, if the maximum number of
- * activities has not been reached */
+ * activities has not been reached and the description is valid */
 void
 add_new_activity(char des[], data d[]) {
 	if (!max_activities(d) && is_valid_activity(des)) {
-		strcpy(d[0].a[ACTIVITY_INDEX].des, des);
+		strcpy(ACTIVITY_DESCRIPTION(ACTIVITY_INDEX), des);
+
+		/* Increment activity indexer */
 		increment_counter(1, 'a', d);
 	}
 }
 
+/* Initializes the activity index and adds the default activities */
 void
 init_activities(data d[]) {
 	/* Start activity vector index at 0 */
