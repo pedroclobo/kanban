@@ -72,5 +72,7 @@ mergesort(data d[], int l, int r, char type) {
 	mergesort(d, l, m, type);
 	mergesort(d, m + 1, r, type);
 	merge(d, l, m, r, type);
+
+	/* Declare by wich criteria tasks have been sorted */
 	change_order_char(d, type);
 }
