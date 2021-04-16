@@ -152,6 +152,7 @@ set_task_activity(char act[], unsigned int id, data d[]) {
 	strcpy(TASK_ACTIVITY(id - 1), act);
 }
 
+/* Gives the specified start time to the task with the given id */
 void
 set_task_start_time(unsigned int id, data d[]) {
 	/* If tasks are not sorted by id, sort them,
