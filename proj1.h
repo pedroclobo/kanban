@@ -41,9 +41,9 @@
 #define ORDER d[0].order
 
 /* Print statements */
-#define PRINT_TASK_ID(x) printf("task %u\n", x)
-#define PRINT_TASK_INFO(a, b, c, d) printf("%u %s #%d %s\n", a, b, c, d)
-#define PRINT_TASK_DURATION_SLACK(a, b) printf("duration=%u slack=%d\n", a, b)
+#define PRINT_TASK_ID(x) "task %u\n", x
+#define PRINT_TASK_INFO(a, b, c, d) "%u %s #%d %s\n", a, b, c, d
+#define PRINT_TASK_DURATION_SLACK(a, b) "duration=%u slack=%d\n", a, b
 
 /* Access object atributtes with the vector index */
 #define TASK_ACTIVITY(x) d[0].t[x].activity.description
@@ -55,20 +55,20 @@
 #define ACTIVITY_DESCRIPTION(x) d[0].a[x].description
 
 /* Errors */
-#define ERROR_TOO_MANY_TASKS printf("too many tasks\n")
-#define ERROR_DUPLICATE_DESCRIPTION printf("duplicate description\n")
-#define ERROR_INVALID_DURATION printf("invalid duration\n")
-#define ERROR_NO_SUCH_TASK(x) printf("%u: no such task\n", x)
-#define ERROR_INVALID_TIME printf("invalid time\n")
-#define ERROR_USER_ALREADY_EXISTS printf("user already exists\n")
-#define ERROR_TOO_MANY_USERS printf("too many users\n")
-#define ERROR_NO_SUCH_TASK_NO_ARG printf("no such task\n")
-#define ERROR_TASK_ALREADY_STARTED printf("task already started\n")
-#define ERROR_NO_SUCH_USER printf("no such user\n")
-#define ERROR_NO_SUCH_ACTIVITY printf("no such activity\n")
-#define ERROR_DUPLICATE_ACTIVITY printf("duplicate activity\n")
-#define ERROR_INVALID_DESCRIPTION printf("invalid description\n")
-#define ERROR_TOO_MANY_ACTIVITIES printf("too many activities\n")
+#define ERROR_TOO_MANY_TASKS "too many tasks\n"
+#define ERROR_DUPLICATE_DESCRIPTION "duplicate description\n"
+#define ERROR_INVALID_DURATION "invalid duration\n"
+#define ERROR_NO_SUCH_TASK(x) "%u: no such task\n", x
+#define ERROR_INVALID_TIME "invalid time\n"
+#define ERROR_USER_ALREADY_EXISTS "user already exists\n"
+#define ERROR_TOO_MANY_USERS "too many users\n"
+#define ERROR_NO_SUCH_TASK_NO_ARG "no such task\n"
+#define ERROR_TASK_ALREADY_STARTED "task already started\n"
+#define ERROR_NO_SUCH_USER "no such user\n"
+#define ERROR_NO_SUCH_ACTIVITY "no such activity\n"
+#define ERROR_DUPLICATE_ACTIVITY "duplicate activity\n"
+#define ERROR_INVALID_DESCRIPTION "invalid description\n"
+#define ERROR_TOO_MANY_ACTIVITIES "too many activities\n"
 
 
 /* A activity contains a description

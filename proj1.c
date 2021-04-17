@@ -1,3 +1,9 @@
+/*
+ * File: proj1.c
+ * Author: Pedro Lobo
+ * Description: File with all high-level functions.
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,15 +17,15 @@ new_task(int dur, char des[], data d[]) {
 
 	/* If task number limit is exceed */
 	if (max_tasks(d))
-		ERROR_TOO_MANY_TASKS;
+		printf(ERROR_TOO_MANY_TASKS);
 
 	/* If a task with the same description already exists */
 	else if (is_task(des, d))
-		ERROR_DUPLICATE_DESCRIPTION;
+		printf(ERROR_DUPLICATE_DESCRIPTION);
 
 	/* If the duration in not a postive integer */
 	else if (!is_valid_task_duration(dur))
-		ERROR_INVALID_DURATION;
+		printf(ERROR_INVALID_DURATION);
 
 	/* Create the new task */
 	else if (is_valid_task_description(des)) {
@@ -27,7 +33,7 @@ new_task(int dur, char des[], data d[]) {
 		set_task_duration(dur, id, d);
 		set_task_description(des, id, d);
 
-		PRINT_TASK_ID(id);
+		printf(PRINT_TASK_ID(id));
 	}
 }
 
@@ -46,13 +52,14 @@ list_tasks(char cmd[], unsigned int ids[], unsigned int *size, data d[]) {
 	/* If command is passed with arguments */
 	for (i = 0; i < *size; i++)
 		if (!is_task_id(ids[i], d))
-			ERROR_NO_SUCH_TASK(ids[i]);
+			printf(ERROR_NO_SUCH_TASK(ids[i]));
 
 		else {
-			PRINT_TASK_INFO(ids[i],
-					get_task_activity(ids[i], d),
-					get_task_duration(ids[i], d),
-					get_task_description(ids[i], d));
+			printf(PRINT_TASK_INFO(ids[i],
+					       get_task_activity(ids[i], d),
+					       get_task_duration(ids[i], d),
+					       get_task_description(ids[i],
+								    d)));
 		}
 }
 
@@ -61,7 +68,7 @@ list_tasks(char cmd[], unsigned int ids[], unsigned int *size, data d[]) {
 void
 foward_time(int dur, data d[]) {
 	if (!is_valid_time(dur))
-		ERROR_INVALID_TIME;
+		printf(ERROR_INVALID_TIME);
 
 	else {
 		increment_counter(dur, 'n', d);
@@ -81,10 +88,10 @@ add_user(char cmd[], char user[], data d[]) {
 
 	/* Error handling */
 	else if (is_user(user, d))
-		ERROR_USER_ALREADY_EXISTS;
+		printf(ERROR_USER_ALREADY_EXISTS);
 
 	else if (max_users(d))
-		ERROR_TOO_MANY_USERS;
+		printf(ERROR_TOO_MANY_USERS);
 
 	/* Add new user */
 	else if (is_valid_user_name(user))
@@ -95,18 +102,18 @@ add_user(char cmd[], char user[], data d[]) {
 void
 move_task(unsigned id, char user[], char activity[], data d[]) {
 	if (!is_task_id(id, d))
-		ERROR_NO_SUCH_TASK_NO_ARG;
+		printf(ERROR_NO_SUCH_TASK_NO_ARG);
 
 	/* When moving a started "TO DO" to "TO DO" */
 	else if (!strcmp(activity, "TO DO")
 		 && strcmp(get_task_activity(id, d), "TO DO"))
-		ERROR_TASK_ALREADY_STARTED;
+		printf(ERROR_TASK_ALREADY_STARTED);
 
 	else if (!is_user(user, d))
-		ERROR_NO_SUCH_USER;
+		printf(ERROR_NO_SUCH_USER);
 
 	else if (!is_activity(activity, d))
-		ERROR_NO_SUCH_ACTIVITY;
+		printf(ERROR_NO_SUCH_ACTIVITY);
 
 	else {
 
@@ -119,11 +126,14 @@ move_task(unsigned id, char user[], char activity[], data d[]) {
 
 		/* If task to move to is "DONE" */
 		if (!strcmp(activity, "DONE")) {
-			PRINT_TASK_DURATION_SLACK(TIME -
-						  get_task_exec_time(id, d),
-						  TIME - get_task_exec_time(id,
+			printf(PRINT_TASK_DURATION_SLACK(TIME -
+							 get_task_exec_time(id,
+									    d),
+							 TIME -
+							 get_task_exec_time(id,
 									    d) -
-						  get_task_duration(id, d));
+							 get_task_duration(id,
+									   d)));
 		}
 	}
 }
@@ -134,7 +144,7 @@ list_tasks_in_activity(char activity[], data d[]) {
 	unsigned i;
 
 	if (!is_activity(activity, d))
-		ERROR_NO_SUCH_ACTIVITY;
+		printf(ERROR_NO_SUCH_ACTIVITY);
 
 	else {
 
@@ -161,13 +171,13 @@ add_activity(char cmd[], char des[], data d[]) {
 
 	else {
 		if (is_activity(des, d))
-			ERROR_DUPLICATE_ACTIVITY;
+			printf(ERROR_DUPLICATE_ACTIVITY);
 
 		else if (!is_valid_activity(des))
-			ERROR_INVALID_DESCRIPTION;
+			printf(ERROR_INVALID_DESCRIPTION);
 
 		else if (max_activities(d))
-			ERROR_TOO_MANY_ACTIVITIES;
+			printf(ERROR_TOO_MANY_ACTIVITIES);
 
 		else {
 			add_new_activity(des, d);

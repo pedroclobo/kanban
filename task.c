@@ -169,7 +169,7 @@ list_all_tasks(data d[]) {
 	unsigned i;
 
 	for (i = 0; i < TASK_INDEX; i++) {
-		PRINT_TASK_INFO(TASK_ID(i), TASK_ACTIVITY(i),
-				TASK_DURATION(i), TASK_DESCRIPTION(i));
+		printf(PRINT_TASK_INFO(TASK_ID(i), TASK_ACTIVITY(i),
+				       TASK_DURATION(i), TASK_DESCRIPTION(i)));
 	}
 }
