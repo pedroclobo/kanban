@@ -1,0 +1,13 @@
+10
+task 1
+1 TO DO #10 proj
+12
+1 IN PROGRESS #10 proj
+15
+duration=3 slack=-7
+1 12 proj
+135
+143
+duration=131 slack=121
+1 12 proj
+1 DONE #10 proj
