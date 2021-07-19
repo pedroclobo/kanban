@@ -3,7 +3,7 @@ CFLAGS=-Wall -Wextra -Werror -ansi -pedantic -g
 
 all:: proj1
 proj1:
-	gcc src/*.c -o proj1
+	$(CC) $(CFLAGS) src/*.c -o proj1
 tests:: proj1
 	$(MAKE) $(MFLAGS) -C tests
 clean::
